@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - {{filename}}</title>
+    <style>
+        body {
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stats-container {
+            background: #fff;
+            margin-top: 60px;
+            padding: 36px 32px 28px 32px;
+            border-radius: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            min-width: 320px;
+            max-width: 90vw;
+        }
+        h1 {
+            color: #222831;
+            margin-bottom: 24px;
+            font-size: 1.7rem;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 18px 0;
+        }
+        li {
+            background: #f0f4ff;
+            margin-bottom: 10px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            color: #333;
+            font-size: 1rem;
+        }
+        li strong {
+            color: #007bff;
+        }
+        .no-stats {
+            color: #b71c1c;
+            margin-bottom: 18px;
+        }
+        .upload-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 18px;
+            background: #007bff;
+            color: #fff;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        .upload-link:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="stats-container">
+        <h1>Statistics of {{filename}}</h1>
+        {% if stats %}
+            <ul>
+                {% for key,value in stats.items %}
+                    <li><strong>{{ key|capfirst }}:</strong> {{ value }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="no-stats">No statistics</div>
+        {% endif %}
+        <a href="{% url 'upload' %}" class="upload-link">Upload another marksheet</a><br>
+        <a href="{% url 'marksheets' %}" class="upload-link">See your Marksheets</a>
+    </div>
+</body>
+</html>
