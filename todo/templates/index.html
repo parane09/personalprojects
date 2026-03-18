@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App | Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>To-do List</h1>
+                    <p class="subtitle">Stay organized and productive.</p>
+                </div>
+                <button id="theme-toggle" class="btn-add" style="padding: 0.5rem 1rem; background: var(--card-bg); border: 1px solid var(--border); color: var(--text-primary);">
+                    🌓 Theme
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <div class="main-grid">
+                <!-- Top Left: Active Tasks Section -->
+                <section class="card tasks-section">
+                    <h2 class="section-title">
+                        <span class="icon">📋</span>
+                        Active Tasks
+                    </h2>
+                    <ul id="task-list">
+                        {%for task in active_tasks%}
+                        <li class="list-item">
+                            <div class="item-content">
+                                <form action="/complete_task/{{task.id}}" method="POST" style="display:inline;">
+                                    <button type="submit" class="checkbox"
+                                        style="background:none; border: 2px solid var(--primary-color); cursor: pointer;"></button>
+                                </form>
+                                <span>{{task.task}}</span>
+                            </div>
+                            <form action="/delete_task/{{task.id}}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">🟥</button>
+                            </form>
+                        </li>
+                        {%endfor%}
+                    </ul>
+                </section>
+
+                <!-- Top Right: Completed Tasks Section -->
+                <section class="card completed-tasks-section" style="border-top: 4px solid var(--success);">
+                    <h2 class="section-title">
+                        <span class="icon">✅</span>
+                        Completed Tasks
+                    </h2>
+                    <ul id="completed-task-list">
+                        {%for task in completed_tasks%}
+                        <li class="list-item completed">
+                            <div class="item-content">
+                                ✅
+                                <span>{{task.task}}</span>
+                            </div>
+                            <form action="/delete_task/{{task.id}}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">🟥</button>
+                            </form>
+                        </li>
+                        {%endfor%}
+                    </ul>
+                </section>
+
+                <!-- Bottom Left: Add New Item Section (Now below Active Tasks) -->
+                <section class="card add-task-section">
+                    <h2 class="section-title">
+                        <span class="icon">➕</span>
+                        Add New Item
+                    </h2>
+                    <form action="/" method="POST" class="input-wrapper">
+                        <input type="text" name="task" placeholder="What needs to be done?" required>
+                        <button type="submit" class="btn-add">Add</button>
+                    </form>
+                </section>
+
+                <!-- Bottom Right: Notes Section (Now below Completed Tasks) -->
+                <section class="card notes-section">
+                    <h2 class="section-title">
+                        <span class="icon">📝</span>
+                        Notes & Ideas
+                    </h2>
+                    <form action="/" method="POST" class="input-wrapper" style="margin-bottom: 1.5rem;">
+                        <input type="text" name="note" placeholder="Add a note or idea..." required>
+                        <button type="submit" class="btn-add" style="background: var(--accent);">Add</button>
+                    </form>
+                    <ul id="notes-list">
+                        {%for note in notes%}
+                        <li class="list-item">
+                            <div class="item-content">
+                                💡
+                                <span>{{note.note}}</span>
+                            </div>
+                            <form action="/delete_note/{{note.id}}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-btn">🟥</button>
+                            </form>
+                        </li>
+                        {%endfor%}
+                    </ul>
+                </section>
+
+                <!-- Pomodoro Timer Section -->
+                <section class="card pomodoro-section" style="border-top: 4px solid #f43f5e; text-align: center;">
+                    <h2 class="section-title">
+                        <span class="icon">⏱️</span>
+                        Pomodoro Timer
+                    </h2>
+                    <div id="timer-display" style="font-size: 3.5rem; font-weight: 800; margin: 1rem 0; font-variant-numeric: tabular-nums;">
+                        25:00
+                    </div>
+                    <div class="input-wrapper" style="margin-bottom: 1.5rem;">
+                        <input type="number" id="pomo-minutes" value="25" min="1" max="999" style="width: 80px; flex: initial; text-align: center;">
+                        <span style="align-self: center; color: var(--text-secondary);">min</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <button id="pomo-start" class="btn-add" style="background: #f43f5e; padding: 1.25rem; font-size: 1.25rem;">Start</button>
+                        <button id="pomo-stop" class="btn-add" style="background: var(--text-secondary); padding: 1rem; font-size: 1.1rem;">Stop</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const bodyValue = document.documentElement;
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        bodyValue.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = bodyValue.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            bodyValue.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Pomodoro Timer Logic
+        let timerInterval;
+        let totalSeconds = 25 * 60;
+        const display = document.getElementById('timer-display');
+        const startBtn = document.getElementById('pomo-start');
+        const stopBtn = document.getElementById('pomo-stop');
+        const inputMin = document.getElementById('pomo-minutes');
+
+        function updateDisplay() {
+            const mins = Math.floor(totalSeconds / 60);
+            const secs = totalSeconds % 60;
+            display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        startBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+            totalSeconds = parseInt(inputMin.value) * 60;
+            updateDisplay();
+            
+            timerInterval = setInterval(() => {
+                totalSeconds--;
+                updateDisplay();
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTtvT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19vT19v').play();
+                    alert("Time's up!");
+                }
+            }, 1000);
+        });
+
+        stopBtn.addEventListener('click', () => {
+            clearInterval(timerInterval);
+        });
+    </script>
+</body>
+
+</html>
