@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - {{filename}}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="stats-page">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <script>
+                {% for message in messages %}
+                    alert("{{ message }}");
+                {% endfor %}
+            </script>
+        {% endif %}
+    {% endwith %}
+    <div class="stats-container">
+        <h1>Statistics of {{filename}}</h1>
+        {% if stats %}
+        <ul>
+            {% for key in stats %}
+            <li><strong>{{ key }}:</strong> {{ stats[key] }}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="no-stats">No statistics</div>
+        {% endif %}
+        <a href="/upload" class="upload-link">Upload another marksheet</a><br>
+        <a href="/marksheets" class="upload-link">See your Marksheets</a>
+    </div>
+</body>
+
+</html>

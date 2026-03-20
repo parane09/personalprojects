@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel File</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="upload-page">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+        alert("{{ message }}");
+        {% endfor %}
+    </script>
+    {% endif %}
+    {% endwith %}
+    <div id="upload">
+        <h1>UPLOAD EXCEL FILE</h1>
+        <form action="" method="POST" enctype="multipart/form-data">
+
+            <div class="file-input-wrapper">
+                <label for="excel_file" class="custom-file-label">Choose Excel File</label>
+                <input type="file" name="excel_file" id="excel_file" accept=".xlsx, .xls" required>
+                <div class="file-name" id="file-name">No file chosen</div>
+            </div>
+            <br>
+            <button type="submit">Check Statistics</button>
+        </form>
+        <a href="/marksheets" class="upload-link">See your Marksheets</a>
+    </div>
+</body>
+<script>
+    const fileInput = document.getElementById('excel_file');
+    const fileNameDisplay = document.getElementById('file-name');
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length > 0) {
+            fileNameDisplay.textContent = fileInput.files[0].name;
+        } else {
+            fileNameDisplay.textContent = 'No file chosen';
+        }
+    });
+</script>
+
+</html>

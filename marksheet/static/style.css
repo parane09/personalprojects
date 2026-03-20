@@ -1,0 +1,244 @@
+/* General Reset and Base Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Upload Page specific styles */
+.upload-page {
+    background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+#upload {
+    background: #fff;
+    padding: 40px 30px;
+    border-radius: 24px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2.5px solid #222831;
+}
+
+#upload h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#upload label {
+    font-size: 16px;
+    color: #555;
+}
+
+.file-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 15px 0 0 0;
+}
+
+input[type="file"] {
+    margin: 0 auto;
+    display: block;
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.custom-file-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #f0f0f0;
+    color: #333;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1.5px solid #007bff;
+    font-size: 15px;
+    margin-bottom: 0;
+    transition: background 0.2s, border 0.2s;
+}
+
+.custom-file-label:hover {
+    background: #e6f0ff;
+    border: 1.5px solid #0056b3;
+}
+
+.file-name {
+    margin-top: 10px;
+    color: #555;
+    font-size: 14px;
+    min-height: 18px;
+    font-weight: bold;
+}
+
+#upload button {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#upload button:hover {
+    background: #0056b3;
+}
+
+/* Statistics Page specific styles */
+.stats-page {
+    background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stats-container {
+    background: #fff;
+    margin-top: 60px;
+    padding: 36px 32px 28px 32px;
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    min-width: 320px;
+    max-width: 90vw;
+}
+
+.stats-container h1 {
+    color: #222831;
+    margin-bottom: 24px;
+    font-size: 1.7rem;
+}
+
+.stats-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px 0;
+}
+
+.stats-container li {
+    background: #f0f4ff;
+    margin-bottom: 10px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: #333;
+    font-size: 1rem;
+}
+
+.stats-container li strong {
+    color: #007bff;
+}
+
+.no-stats {
+    color: #b71c1c;
+    margin-bottom: 18px;
+}
+
+.upload-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 18px;
+    background: #007bff;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.2s;
+}
+
+.upload-link:hover {
+    background: #0056b3;
+}
+
+/* Marksheets Page specific styles */
+.marksheets-page {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.marksheets-container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1000px;
+}
+
+.marksheets-container h1 {
+    color: #222831;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 25px;
+}
+
+th,
+td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background-color: #f8fafc;
+    color: #4a5568;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f1f5f9;
+    cursor: pointer;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 18px;
+    background: #007bff;
+    color: #fff !important;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+.btn-remove {
+    background: #dc3545;
+}
+
+.btn-view {
+    background: #007bff;
+}
+
+.btn-remove:hover {
+    background: #c82333;
+}
+
+.nav-links {
+    margin-top: 20px;
+}
+
+.nav-links a {
+    margin-right: 15px;
+}

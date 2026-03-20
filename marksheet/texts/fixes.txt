@@ -1,0 +1,5 @@
+DONE- 1. store uploaded marksheets in database table. fields: name,mean,median,std,min,max
+DONE- 2. show table in marksheets.html
+DONE- 3. add functioanlity to view individual statistics of a paper using button for table row
+4. view progression of individual fields over span of papers
+DONE- 5. if table is empty it should display message
