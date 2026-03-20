@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sports — Freshers' 2026 UCSC</title>
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,600;0,700;1,400&family=Barlow+Condensed:wght@400;700;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    .gender-tab {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0.3rem 0.9rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .gender-tab:hover {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+
+    .gender-tab.active {
+      background: var(--grad);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .gender-tab.boys.active {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    }
+
+    .gender-tab.girls.active {
+      background: linear-gradient(135deg, #ec4899, #be185d);
+    }
+
+    .nav-user {
+        color: #ff6b00;
+        font-family: 'Barlow Condensed', sans-serif;
+        font-weight: 700;
+        margin-right: 1rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  {% include 'core/navbar.html' %}
+
+  <div class="page-header">
+    <span class="section-tag">20 EVENTS</span>
+    <h1>All Sports</h1>
+    <p>Select a sport to register, view registered players, and join the WhatsApp group.</p>
+  </div>
+
+  <!-- SPORT DETAIL PANEL -->
+  <div id="sportDetail" style="display:none;">
+    <div class="sport-detail-hero">
+      <span class="sport-detail-icon" id="detailIcon"></span>
+      <h1 id="detailName"></h1>
+      <p id="detailDesc"></p>
+      <a id="detailWhatsapp" href="#" target="_blank" class="whatsapp-btn">
+        &#128172; Join WhatsApp Group
+      </a>
+    </div>
+
+    <div class="section">
+      <!-- Registration Form -->
+      <div class="reg-form-container">
+        <h3>Register for <span id="formSportName"></span></h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="regName" placeholder="e.g. Kasun Perera" />
+          </div>
+          <div class="form-group">
+            <label>Student ID *</label>
+            <input type="text" id="regStudentId" placeholder="e.g. CS/2024/001" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" id="regEmail" placeholder="e.g. kasun@student.cmb.ac.lk" />
+          </div>
+          <div class="form-group">
+            <label>Contact Number *</label>
+            <input type="tel" id="regContact" placeholder="e.g. 0771234567" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Gender *</label>
+            <select id="regGender">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Degree</label>
+            <select id="regDept">
+              <option value="">Select Degree</option>
+              <option>Computer Science</option>
+              <option>Information Systems</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="registerPlayer()">Register Now</button>
+          <div id="formMessage" class="form-message"></div>
+        </div>
+      </div>
+
+      <!-- Registered Players -->
+      <div class="players-table-wrap">
+        <div class="players-table-header" style="flex-wrap:wrap;gap:0.75rem;">
+          <span>Registered Players - <span id="playerCount">0</span> registered</span>
+          <div style="display:flex;gap:0.5rem;">
+            <button class="gender-tab active" onclick="setGenderFilter('all', this)">All</button>
+            <button class="gender-tab boys" onclick="setGenderFilter('Male', this)">Boys</button>
+            <button class="gender-tab girls" onclick="setGenderFilter('Female', this)">Girls</button>
+          </div>
+        </div>
+        <table class="players-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Student ID</th>
+              <th>Gender</th>
+              <th>Department</th>
+              <th>Contact</th>
+            </tr>
+          </thead>
+          <tbody id="playersBody">
+            <tr class="empty-row">
+              <td colspan="6">LOADING REGISTRATIONS...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:1.5rem; text-align:center;">
+        <button class="btn-outline" onclick="backToList()">Back to All Sports</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPORTS LIST -->
+  <div id="sportsList">
+    <div class="section">
+      <div class="sports-grid" id="allSportsGrid"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-tag">UCSC</span>
+        <p>Freshers' Sports 2026<br />University of Colombo School of Computing</p>
+      </div>
+      <div class="footer-links">
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'sports' %}">Sports</a>
+        <a href="{% url 'schedule' %}">Schedule</a>
+        <a href="{% url 'coaches' %}">Coaches</a>
+        <a href="{% url 'news' %}">News</a>
+      </div>
+    </div>
+    <div class="footer-bottom">2026 UCSC Freshers' Sports. All rights reserved.</div>
+  </footer>
+
+  <script src="{% static 'core/js/data.js' %}"></script>
+  <script src="{% static 'core/js/main.js' %}"></script>
+  <script>
+    var currentSportId = null;
+    var currentGenderFilter = 'all';
+
+    function setGenderFilter(filter, btn) {
+      currentGenderFilter = filter;
+      var tabs = document.querySelectorAll('.gender-tab');
+      for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); }
+      btn.classList.add('active');
+      renderPlayers(currentSportId);
+    }
+
+    var grid = document.getElementById('allSportsGrid');
+    SPORTS.forEach(s => {
+        var div = document.createElement('a');
+        div.className = 'sport-card';
+        div.href = '#';
+        div.id = 'card-' + s.id;
+        div.innerHTML =
+          '<span class="sport-icon">' + s.icon + '</span>' +
+          '<div class="sport-name">' + s.name + '</div>' +
+          '<div class="sport-count" id="count-' + s.id + '">0 registered</div>';
+        div.onclick = function (e) { e.preventDefault(); showSport(s.id); };
+        grid.appendChild(div);
+    });
+
+    function updateAllCounts() {
+        fetch('/api/stats/')
+        .then(r => r.json())
+        .then(data => {
+            SPORTS.forEach(s => {
+                const countEl = document.getElementById('count-' + s.id);
+                if(countEl) countEl.textContent = (data.by_sport[s.id] || 0) + ' registered';
+            });
+        });
+    }
+    updateAllCounts();
+
+    var params = new URLSearchParams(window.location.search);
+    var paramSport = params.get('sport');
+    if (paramSport) { showSport(paramSport); }
+
+    function showSport(id) {
+      var sport = null;
+      for (var i = 0; i < SPORTS.length; i++) { if (SPORTS[i].id === id) { sport = SPORTS[i]; break; } }
+      if (!sport) return;
+      currentSportId = id;
+      currentGenderFilter = 'all';
+
+      document.getElementById('detailIcon').textContent = sport.icon;
+      document.getElementById('detailName').textContent = sport.name;
+      document.getElementById('detailDesc').textContent = sport.desc;
+      document.getElementById('detailWhatsapp').href = sport.whatsapp;
+      document.getElementById('formSportName').textContent = sport.name;
+
+      var tabs = document.querySelectorAll('.gender-tab');
+      for (var i = 0; i < tabs.length; i++) { tabs[i].classList.remove('active'); }
+      tabs[0].classList.add('active');
+
+      document.getElementById('sportsList').style.display = 'none';
+      document.getElementById('sportDetail').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderPlayers(id);
+    }
+
+    function backToList() {
+      currentSportId = null;
+      currentGenderFilter = 'all';
+      document.getElementById('sportsList').style.display = 'block';
+      document.getElementById('sportDetail').style.display = 'none';
+      updateAllCounts();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function genderBadge(gender) {
+      if (gender === 'Male') {
+        return '<span style="color:#60a5fa;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;font-size:0.85rem;">Male</span>';
+      }
+      if (gender === 'Female') {
+        return '<span style="color:#f472b6;font-family:Barlow Condensed,sans-serif;letter-spacing:1px;font-size:0.85rem;">Female</span>';
+      }
+      return '<span style="color:var(--text-muted);font-size:0.85rem;">' + (gender || '-') + '</span>';
+    }
+
+    function renderPlayers(id) {
+      fetch(`/api/registrations/${id}/`)
+      .then(r => r.json())
+      .then(allRegs => {
+        var regs = currentGenderFilter === 'all'
+          ? allRegs
+          : allRegs.filter(function (r) { return r.gender === currentGenderFilter; });
+
+        var body = document.getElementById('playersBody');
+        var countEl = document.getElementById('playerCount');
+        if (currentGenderFilter === 'all') {
+          countEl.textContent = allRegs.length;
+        } else {
+          countEl.textContent = regs.length + ' of ' + allRegs.length;
+        }
+
+        if (regs.length === 0) {
+          var emptyMsg = currentGenderFilter === 'all'
+            ? 'NO REGISTRATIONS YET - BE THE FIRST!'
+            : 'NO ' + currentGenderFilter.toUpperCase() + ' PLAYERS REGISTERED YET.';
+          body.innerHTML = '<tr class="empty-row"><td colspan="6">' + emptyMsg + '</td></tr>';
+          return;
+        }
+
+        var html = '';
+        for (var i = 0; i < regs.length; i++) {
+          var r = regs[i];
+          html += '<tr>' +
+            '<td style="color:var(--text-muted)">' + (i + 1) + '</td>' +
+            '<td><strong>' + r.full_name + '</strong></td>' +
+            '<td style="color:var(--primary);font-family:Barlow Condensed,sans-serif;letter-spacing:1px">' + r.student_id + '</td>' +
+            '<td>' + genderBadge(r.gender) + '</td>' +
+            '<td style="color:var(--text-muted)">' + (r.department || '-') + '</td>' +
+            '<td style="color:var(--text-muted)">' + r.contact + '</td>' +
+            '</tr>';
+        }
+        body.innerHTML = html;
+      });
+    }
+
+    function registerPlayer() {
+      var name = document.getElementById('regName').value.trim();
+      var studentId = document.getElementById('regStudentId').value.trim();
+      var email = document.getElementById('regEmail').value.trim();
+      var contact = document.getElementById('regContact').value.trim();
+      var gender = document.getElementById('regGender').value;
+      var dept = document.getElementById('regDept').value;
+      var msg = document.getElementById('formMessage');
+
+      if (!name || !studentId || !email || !contact || !gender) {
+        msg.className = 'form-message error';
+        msg.textContent = 'Please fill in all required fields including Gender.';
+        return;
+      }
+
+      var sportName = '';
+      for (var j = 0; j < SPORTS.length; j++) { if (SPORTS[j].id === currentSportId) { sportName = SPORTS[j].name; break; } }
+
+      fetch('/api/register/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({
+              sport_id: currentSportId,
+              sport_name: sportName,
+              full_name: name,
+              student_id: studentId,
+              email: email,
+              contact: contact,
+              gender: gender,
+              department: dept
+          })
+      })
+      .then(r => r.json())
+      .then(data => {
+          if(data.status === 'success') {
+            document.getElementById('regName').value = '';
+            document.getElementById('regStudentId').value = '';
+            document.getElementById('regEmail').value = '';
+            document.getElementById('regContact').value = '';
+            document.getElementById('regGender').value = '';
+            document.getElementById('regDept').value = '';
+
+            msg.className = 'form-message success';
+            msg.textContent = 'Successfully registered ' + name + ' for ' + sportName + '!';
+            renderPlayers(currentSportId);
+            setTimeout(function () { msg.className = 'form-message'; msg.textContent = ''; }, 4000);
+          } else {
+            msg.className = 'form-message error';
+            msg.textContent = data.message || 'Registration failed.';
+          }
+      });
+    }
+  </script>
+</body>
+
+</html>
